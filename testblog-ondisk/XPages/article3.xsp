@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core">
+    <xp:button value="Label" id="button1">
+        <xp:eventHandler event="onclick" submit="true" refreshMode="complete">
+            <xp:this.action><![CDATA[#{javascript:
+                var v = null;
+                var coll = null;
+                try {
+                    v = database.getView("($All)");
+                    coll = v.getAllEntries();
+                    var entry = coll.getFirstEntry();
+                    while( entry != null ) {
+                        
+                        // Faites quelque chose avec le doc
+                        print(entry);
+                        
+                        var tmp = coll.getNextEntry(entry);
+                        fr.asi.xsp.testblog.utils.TestBlogUtils.recycleQuietly([entry]);
+                        entry = tmp;
+                    }
+                } finally {
+                    fr.asi.xsp.testblog.utils.TestBlogUtils.recycleQuietly([coll, v]);
+                }
+            }]]></xp:this.action>
+        </xp:eventHandler>
+    </xp:button>
+</xp:view>

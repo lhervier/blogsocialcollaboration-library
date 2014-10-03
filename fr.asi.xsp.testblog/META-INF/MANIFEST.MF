@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Testblog Plug-in
+Bundle-SymbolicName: fr.asi.xsp.testblog;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: fr.asi.xsp.testblog.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-ActivationPolicy: lazy
+Require-Bundle: com.ibm.xsp.core;bundle-version="9.0.1",
+ com.ibm.xsp.extlib;bundle-version="9.0.1",
+ com.ibm.xsp.domino;bundle-version="9.0.1",
+ com.ibm.xsp.designer;bundle-version="9.0.1",
+ com.ibm.designer.runtime;bundle-version="9.0.1",
+ com.ibm.designer.runtime.directory;bundle-version="9.0.1",
+ org.eclipse.core.runtime;bundle-version="3.4.0",
+ com.ibm.notes.java.api
+Export-Package: fr.asi.xsp.testblog,
+ fr.asi.xsp.testblog.utils
