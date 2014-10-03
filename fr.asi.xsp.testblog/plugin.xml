@@ -8,5 +8,12 @@
             type="com.ibm.xsp.Library">
       </service>
    </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="fr.asi.xsp.testblog.TestBlogRessourceProvider"
+            type="com.ibm.xsp.GlobalResourceProvider">
+      </service>
+   </extension>
 
 </plugin>
