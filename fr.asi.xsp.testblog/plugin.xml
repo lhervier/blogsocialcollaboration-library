@@ -15,5 +15,12 @@
             type="com.ibm.xsp.GlobalResourceProvider">
       </service>
    </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="fr.asi.xsp.testblog.TestBlogLibraryFactory"
+            type="com.ibm.xsp.JavaScriptLibFactory">
+      </service>
+   </extension>
 
 </plugin>
