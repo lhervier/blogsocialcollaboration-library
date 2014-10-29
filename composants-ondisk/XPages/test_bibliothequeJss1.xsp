@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
-	<xc:bibliothequeJss/>
+<xp:view 
+		xmlns:xp="http://www.ibm.com/xsp/core" 
+		xmlns:tb="http://blogsocialcollaboration.asi-informatique.fr/xsp/testblog">
+	<tb:bibliothequeJss/>
 </xp:view>
