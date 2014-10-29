@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core">
+	<xp:this.resources>
+		<xp:script src="/maBiblio.extjss" clientSide="false"/>
+	</xp:this.resources>
+	
+	<xp:button value="Message" id="button1">
+		<xp:eventHandler event="onclick" submit="true" refreshMode="complete">
+			<xp:this.action><![CDATA[#{javascript:
+				message("hello world !");
+			}]]></xp:this.action>
+		</xp:eventHandler>
+	</xp:button>
+</xp:view>
