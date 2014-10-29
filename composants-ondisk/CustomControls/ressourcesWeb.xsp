@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core">
+	<xp:this.resources>
+		<xp:styleSheet href="/.ibmxspres/testblog/testblog.css"></xp:styleSheet>
+	</xp:this.resources>
+	
+	<xp:div styleClass="testblog">
+		<xp:label value="Hello World!"/>
+	</xp:div>
+</xp:view>
