@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core"
+	xmlns:tb="http://blogsocialcollaboration.asi-informatique.fr/xsp/testblog">
+
+	Custom control contenant le second :
+	<xp:br></xp:br>
+	<tb:cc2></tb:cc2></xp:view>
