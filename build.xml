@@ -1,0 +1,198 @@
+<project name="TestBlog" basedir="." default="dist">
+	<!-- Properties to override -->
+	<property name="VERSION" value="4.6.0"/>
+	<property name="NOTES_INSTALL_PATH" value="D:/ibm/notes/"/>
+	
+	<!-- Internal properties -->
+	<property name="osgi.prefix" value="fr.asi.xsp.testblog."/>
+	<property name="build.target" value="${basedir}/target"/>
+	
+	<!-- Additionnal Classpath -->
+	<path id="project.class.path">
+		<fileset dir="${basedir}/build/lib" includes="*.jar" />
+	</path>
+	<taskdef
+			resource="userlessbuild-ant-tasks.properties"
+			classpathref="project.class.path"/>
+	
+	<!--
+		=======================
+			The main target
+		=======================
+	-->
+	<target name="dist" depends="clean,version,import,generate_update_site,library_install,nsf,generate_artifact"/>
+	
+	<!--
+		=========================================
+			Initialisation. Cleans everything
+		=========================================
+	-->
+	<target name="clean">
+		<!-- Create the empty target folder. We will generate the nsf and the update site inside -->
+		<delete dir="${build.target}/"/>
+		<mkdir dir="${build.target}"/>
+		
+		<!-- Cleans the notes data folder -->
+		<delete file="${NOTES_INSTALL_PATH}/data/TestBlog_Components.nsf"/>
+		<delete file="${NOTES_INSTALL_PATH}/data/TestBlog.nsf"/>
+		
+		<!-- Remove a previous install of the Custom Library -->
+		<delete includeemptydirs="true">
+			<fileset 
+					dir="${NOTES_INSTALL_PATH}/framework/rcp/eclipse/features/"
+					includes="/${osgi.prefix}*/"/>
+			<fileset
+					dir="${NOTES_INSTALL_PATH}/framework/rcp/eclipse/plugins/"
+					includes="/${osgi.prefix}*/"/>
+		</delete>
+		
+		<!-- Restore a clean workspace -->
+		<delete dir="${NOTES_INSTALL_PATH}/data/workspace/"/>
+		<copy todir="${NOTES_INSTALL_PATH}/data/workspace/">
+			<fileset dir="${NOTES_INSTALL_PATH}/data/workspace-template/"/>
+		</copy>
+		
+		<!-- Clean Java projects by removing their "bin" folder -->
+		<delete includeemptydirs="true">
+			<fileset dir="${basedir}" includes="**/bin/**" defaultexcludes="false"/>
+		</delete>
+		
+		<!-- Remove a previous compiled version of the custom library -->
+		<delete includeemptydirs="true" dir="fr.asi.xsp.testblog.site/features"/>
+		<delete includeemptydirs="true" dir="fr.asi.xsp.testblog.site/plugins"/>
+	</target>
+	
+	<!--
+		=================================
+			Update the version number
+		=================================
+	-->
+	<target name="version">
+		<!-- Update the version number in the plugins -->
+		<setManifestVersion version="${VERSION}" manifestFile="fr.asi.xsp.testblog/META-INF/MANIFEST.MF"/>
+		<setManifestVersion version="${VERSION}" manifestFile="fr.asi.xsp.testblog.composants/META-INF/MANIFEST.MF"/>
+		
+		<!-- Update the version in the features -->
+		<setFeatureVersion version="${VERSION}" featureXmlFile="fr.asi.xsp.testblog.feature/feature.xml"/>
+		
+		<!-- Update the update site -->
+		<setUpdateSiteVersion version="${VERSION}" siteXmlFile="fr.asi.xsp.testblog.site/site.xml"/>
+		
+		<!-- Add version number in the nsf titles -->
+		<setOnDiskTitle onDiskPath="composants-ondisk" title="TestBlog Composants v${VERSION}"/>
+		<setOnDiskTitle onDiskPath="testblog-ondisk" title="TestBlog v${VERSION}"/>
+	</target>
+	
+	<!--
+		===================================================================
+			Target to import the eclipse projects into designer
+		===================================================================
+	-->
+	<target name="import">
+		<runDesignerCommands designerPath="${NOTES_INSTALL_PATH}">
+			config,true,true
+			
+			# ====================================
+			#  Import and compile plugin projects
+			# ====================================
+			com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,${basedir}/fr.asi.xsp.testblog/.project
+			fr.asi.designer.userlessbuild.WaitForBuildJob
+			fr.asi.designer.userlessbuild.CheckErrorJob,fr.asi.xsp.testblog
+			
+			com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,${basedir}/fr.asi.xsp.testblog.composants/.project
+			fr.asi.designer.userlessbuild.WaitForBuildJob
+			fr.asi.designer.userlessbuild.CheckErrorJob,fr.asi.xsp.testblog.composants
+			
+			# ================================
+			#  Import feature and update site
+			# ================================
+			com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,${basedir}/fr.asi.xsp.testblog.feature/.project
+			fr.asi.designer.userlessbuild.WaitForBuildJob
+			fr.asi.designer.userlessbuild.CheckErrorJob,fr.asi.xsp.testblog.feature
+			
+			com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,${basedir}/fr.asi.xsp.testblog.site/.project
+			fr.asi.designer.userlessbuild.WaitForBuildJob
+			fr.asi.designer.userlessbuild.CheckErrorJob,fr.asi.xsp.testblog.site
+			
+			# ============================
+			#  Import NSF ondisk projects
+			# ============================
+			com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,${basedir}/composants-ondisk/.project
+			fr.asi.designer.userlessbuild.WaitForBuildJob
+			fr.asi.designer.userlessbuild.CheckErrorJob,composants-ondisk
+			
+			com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,${basedir}/testblog-ondisk/.project
+			fr.asi.designer.userlessbuild.WaitForBuildJob
+			fr.asi.designer.userlessbuild.CheckErrorJob,testblog-ondisk
+			
+			exit
+		</runDesignerCommands>
+	</target>
+	
+	<!--
+		==========================================
+			Target to generate the update site
+		==========================================
+	-->
+	<target name="generate_update_site">
+		<runDesignerCommands designerPath="${NOTES_INSTALL_PATH}">
+			config,true,true
+			fr.asi.designer.userlessbuild.HDBuildSiteJob,fr.asi.xsp.testblog.site
+			exit
+		</runDesignerCommands>
+	</target>
+	
+	<!--
+		===================================================
+			Target to install the library into designer
+		===================================================
+	-->
+	<target name="library_install" >
+		<runDesignerCommands designerPath="${NOTES_INSTALL_PATH}">
+			config,true,true
+			
+			com.ibm.designer.domino.tools.userlessbuild.jobs.UpdateManagerJob,-command install -from file:/${basedir}/fr.asi.xsp.testblog.site -featureId fr.asi.xsp.testblog.feature -version ${VERSION}
+			com.ibm.designer.domino.tools.userlessbuild.jobs.UpdateManagerJob,-command enable -featureId fr.asi.xsp.testblog.feature -version ${VERSION}
+			
+			exit
+		</runDesignerCommands>
+	</target>
+	
+	<!--
+		==================================
+			Target to generate the nsf
+		==================================
+	-->
+	<target name="nsf">
+		<runDesignerCommands designerPath="${NOTES_INSTALL_PATH}">
+			config,true,true
+			
+			importandbuild,${basedir}/composants-ondisk/.project,TestBlog_Components.nsf
+			wait,TestBlog_Components.nsf,20
+			fr.asi.designer.userlessbuild.CheckErrorJob,TestBlog_Components.nsf
+			
+			importandbuild,${basedir}/testblog-ondisk/.project,TestBlog.nsf
+			wait,TestBlog.nsf,20
+			fr.asi.designer.userlessbuild.CheckErrorJob,TestBlog.nsf
+			
+			exit
+		</runDesignerCommands>
+	</target>
+	
+	<!--
+		=============================================
+			Target to generate the final artifact
+		=============================================
+	-->
+	<target name="generate_artifact">
+		<copy todir="${build.target}/dist/updateSite/">
+			<fileset dir="${basedir}/fr.asi.xsp.testblog.site/">
+				<exclude name=".project"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.target}/dist/" file="${NOTES_INSTALL_PATH}/data/TestBlog_Components.nsf"/>
+		<copy todir="${build.target}/dist/" file="${NOTES_INSTALL_PATH}/data/TestBlog.nsf"/>
+		
+		<zip destfile="${build.target}/testblog-${VERSION}.zip" basedir="${build.target}/dist/"/>
+	</target>
+</project>

@@ -1,3 +1,5 @@
 bin/
 fr.asi.xsp.testblog.site/plugins
 fr.asi.xsp.testblog.site/features
+target/
+HEADLESS*.log
